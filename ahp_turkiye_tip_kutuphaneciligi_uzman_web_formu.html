@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AHP Uzman Değerlendirme Formu</title>
+  <style>
+    :root {
+      --navy:#1f4e78; --teal:#0f766e; --ink:#243447; --muted:#64748b;
+      --line:#d5dee8; --pale:#f5f8fb; --blue:#e7f1f8; --amber:#fff4cf;
+      --green:#e2f0d9; --red:#fde7e7; --left:#2b6ca3; --right:#b45309;
+    }
+    * { box-sizing:border-box; }
+    body { margin:0; background:#eef3f7; color:var(--ink); font-family:Segoe UI,Arial,sans-serif; line-height:1.4; }
+    .page { max-width:1320px; margin:0 auto; padding:22px; }
+    .hero { background:white; border:1px solid var(--line); border-radius:16px; padding:24px 28px; box-shadow:0 5px 18px rgba(31,78,120,.08); }
+    h1 { margin:0 0 5px; color:var(--navy); font-size:clamp(1.45rem,2.5vw,2.1rem); }
+    h2 { margin:0; color:var(--navy); font-size:1.12rem; }
+    p { margin:5px 0; }
+    .subtitle { color:var(--muted); font-style:italic; }
+    .notice { margin-top:16px; background:var(--amber); border-left:5px solid #d99b00; border-radius:8px; padding:12px 14px; }
+    .profile { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin-top:18px; }
+    label { font-weight:600; font-size:.88rem; color:var(--navy); }
+    input { width:100%; margin-top:5px; padding:10px 11px; border:1px solid #b9c8d6; border-radius:8px; background:white; font:inherit; }
+    input:focus { outline:3px solid rgba(31,78,120,.18); border-color:var(--navy); }
+    .legend { margin-top:18px; padding:13px 15px; border:1px solid var(--line); border-radius:10px; background:var(--pale); }
+    .legend-row { display:flex; align-items:center; justify-content:center; gap:5px; flex-wrap:wrap; margin-top:8px; }
+    .legend-pill { min-width:33px; text-align:center; padding:4px 6px; border-radius:6px; color:white; font-weight:700; font-size:.8rem; }
+    .legend-pill.left { background:var(--left); } .legend-pill.equal { background:var(--teal); } .legend-pill.right { background:var(--right); }
+    .legend-text { font-size:.82rem; color:var(--muted); }
+    .section { margin-top:24px; }
+    .section-head { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:10px; }
+    .section-head p { color:var(--muted); font-size:.88rem; }
+    .count { background:var(--blue); color:var(--navy); border-radius:999px; padding:4px 10px; white-space:nowrap; font-size:.8rem; font-weight:700; }
+    .question { background:white; border:1px solid var(--line); border-radius:12px; padding:14px; margin:10px 0; box-shadow:0 2px 7px rgba(15,53,82,.04); }
+    .question.unanswered { border-color:#e1a2a2; background:#fffafa; }
+    .q-top { display:grid; grid-template-columns:45px 175px 1fr; gap:10px; align-items:start; }
+    .q-no { color:var(--navy); font-weight:800; }
+    .q-context { color:var(--muted); font-size:.83rem; }
+    .q-context strong { color:var(--navy); display:block; }
+    .pair { display:grid; grid-template-columns:minmax(0,1fr) 150px minmax(0,1fr); gap:12px; align-items:center; margin-top:12px; }
+    .item { min-height:50px; display:flex; align-items:center; padding:10px 12px; border-radius:9px; background:var(--blue); color:var(--navy); font-weight:700; }
+    .item.right-item { justify-content:flex-end; text-align:right; background:#fff0df; color:#8a4305; }
+    .item small { display:block; font-size:.75rem; font-weight:600; opacity:.78; }
+    .vs { text-align:center; color:var(--muted); font-size:.78rem; font-weight:700; }
+    .scale-wrap { margin-top:9px; }
+    .scale { display:grid; grid-template-columns:repeat(17,minmax(24px,1fr)); gap:4px; }
+    .scale-btn { min-height:34px; border:1px solid #b9c8d6; border-radius:6px; background:#fff; color:var(--ink); cursor:pointer; font-weight:700; font-size:.78rem; transition:.12s ease; }
+    .scale-btn:hover { transform:translateY(-1px); box-shadow:0 2px 5px rgba(31,78,120,.18); }
+    .scale-btn.left:hover,.scale-btn.left.selected { background:var(--left); border-color:var(--left); color:#fff; }
+    .scale-btn.equal:hover,.scale-btn.equal.selected { background:var(--teal); border-color:var(--teal); color:#fff; }
+    .scale-btn.right:hover,.scale-btn.right.selected { background:var(--right); border-color:var(--right); color:#fff; }
+    .scale-labels { display:flex; justify-content:space-between; color:var(--muted); font-size:.72rem; margin-top:5px; }
+    .choice { min-height:20px; margin-top:7px; text-align:center; color:var(--muted); font-size:.82rem; }
+    .choice.done { color:var(--teal); font-weight:700; }
+    .actions { position:sticky; bottom:14px; z-index:5; margin-top:26px; padding:14px; background:rgba(255,255,255,.96); border:1px solid var(--line); border-radius:13px; box-shadow:0 5px 18px rgba(31,78,120,.14); }
+    .progress-line { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px; font-weight:700; color:var(--navy); }
+    .progress { height:9px; background:#e6edf3; border-radius:99px; overflow:hidden; flex:1; }
+    .progress > span { display:block; height:100%; width:0; background:linear-gradient(90deg,var(--teal),#5aa88f); transition:.2s ease; }
+    .button-row { display:flex; flex-wrap:wrap; gap:9px; }
+    button.action { border:0; border-radius:8px; padding:10px 14px; font:inherit; font-weight:700; cursor:pointer; background:var(--navy); color:#fff; }
+    button.action.secondary { background:#e7eef4; color:var(--navy); border:1px solid #c4d2df; }
+    button.action.warn { background:#9f3d3d; }
+    button.action:disabled { opacity:.5; cursor:not-allowed; }
+    #status { min-height:22px; margin-top:8px; font-size:.86rem; }
+    #status.ok { color:#176b45; } #status.error { color:#9f3030; }
+    .footer-note { color:var(--muted); font-size:.8rem; margin-top:12px; }
+    @media (max-width:900px) { .profile{grid-template-columns:repeat(2,minmax(0,1fr));} .q-top{grid-template-columns:40px 1fr;} .q-context{grid-column:2;} .pair{grid-template-columns:1fr;} .item.right-item{justify-content:flex-start;text-align:left;} .vs{display:none;} .scale{grid-template-columns:repeat(9,minmax(27px,1fr));} .scale-btn:nth-child(9){grid-column:5;} .scale-btn:nth-child(10){grid-column:1;} }
+    @media (max-width:560px) { .page{padding:10px;} .hero{padding:17px;} .profile{grid-template-columns:1fr;} .scale{grid-template-columns:repeat(6,minmax(30px,1fr));} .scale-btn{min-height:32px;} .section-head{display:block;} .count{display:inline-block;margin-top:5px;} }
+    @media print { body{background:#fff;} .page{max-width:none;padding:0;} .hero{border:0;box-shadow:none;padding:0;} .notice,.legend,.actions,.footer-note{display:none;} .profile{grid-template-columns:repeat(4,1fr);margin-top:10px;} input{border:0;padding:3px 0;} .section{break-inside:avoid;margin-top:14px;} .question{box-shadow:none;border:1px solid #ccd3d9;break-inside:avoid;padding:9px;} .scale{display:flex;justify-content:center;gap:4px;} .scale-btn{display:none;min-width:30px;padding:3px;} .scale-btn.selected{display:inline-flex;align-items:center;justify-content:center;} .scale-labels{display:none;} .choice{margin-top:3px;} .q-top{grid-template-columns:35px 155px 1fr;} h1{font-size:18px;} }
+  </style>
+</head>
+<body>
+<main class="page">
+  <header class="hero">
+    <h1>AHP Uzman Değerlendirme Formu</h1>
+    <p class="subtitle">Türkiye tıp kütüphaneciliği yetkinlikleri — 27 ikili karşılaştırma</p>
+    <div class="notice">
+      <strong>Nasıl doldurulur?</strong> Her satırda iki ifadeyi kendi mesleki deneyiminize göre karşılaştırın. Daha önemli olan tarafa doğru ilerleyen dereceyi seçin. Ortadaki <strong>1</strong> iki ifadenin eşit önemde olduğunu gösterir. Karşılıklılık hesabı (ör. 1/3) form tarafından otomatik yapılır; uzmanın kesir yazması gerekmez. Formu tamamladıktan sonra “Yanıtları indir” ile JSON/CSV dosyasını veya “Yazdır / PDF” ile çıktıyı araştırmacıya iletin.
+    </div>
+    <div class="profile">
+      <label>Uzman kodu<input id="expertCode" autocomplete="off" placeholder="Araştırmacının verdiği kod"></label>
+      <label>Görev / rol<input id="role" autocomplete="organization-title" placeholder="Örn. tıp kütüphanecisi"></label>
+      <label>Deneyim yılı<input id="years" type="number" min="0" max="80" step="1" placeholder="Örn. 8"></label>
+      <label>Kurum türü<input id="institution" autocomplete="organization" placeholder="Örn. üniversite hastanesi"></label>
+    </div>
+    <div class="legend">
+      <strong>Ölçek:</strong> Renkli düğmelerin sol tarafı soldaki öğenin, sağ tarafı sağdaki öğenin daha önemli olduğunu gösterir.
+      <div class="legend-row" aria-hidden="true">
+        <span class="legend-text">Sol çok daha önemli</span>
+        <span class="legend-pill left">9</span><span class="legend-pill left">7</span><span class="legend-pill left">5</span><span class="legend-pill left">3</span><span class="legend-pill left">2</span>
+        <span class="legend-pill equal">1</span>
+        <span class="legend-pill right">2</span><span class="legend-pill right">3</span><span class="legend-pill right">5</span><span class="legend-pill right">7</span><span class="legend-pill right">9</span>
+        <span class="legend-text">Sağ çok daha önemli</span>
+      </div>
+    </div>
+  </header>
+  <div id="questions"></div>
+  <section class="actions">
+    <div class="progress-line"><span id="progressText">0 / 27 tamamlandı</span><div class="progress"><span id="progressBar"></span></div></div>
+    <div class="button-row">
+      <button class="action" id="downloadJson" type="button">Yanıtları indir (JSON)</button>
+      <button class="action secondary" id="downloadCsv" type="button">CSV indir</button>
+      <button class="action secondary" id="printForm" type="button">Yazdır / PDF kaydet</button>
+      <button class="action warn" id="clearForm" type="button">Temizle</button>
+    </div>
+    <div id="status" role="status" aria-live="polite"></div>
+    <p class="footer-note">JSON/CSV dosyası, araştırmacının 27 kodlanmış AHP değerini ana hesaplama şablonuna aktarmasını kolaylaştırır. PDF çıktısı okunabilir kayıt sağlar; makineye aktarım için JSON/CSV tercih edilir.</p>
+  </section>
+</main>
+<script>
+const domains = {
+  A1:"Bilgi ve Klinik Destek Yetkinlikleri", A2:"Eğitim ve Kullanıcı Hizmetleri Yetkinlikleri",
+  A3:"Dijital ve Veri Yönetimi Yetkinlikleri", A4:"Yönetim ve Kurumsal Yetkinlikler"
+};
+const themes = {
+  T1:{parent:"A1",name:"Bilgiye Erişim ve Literatür Hizmetleri"}, T2:{parent:"A1",name:"Klinik, Tıbbi ve Araştırma Destek Yetkinlikleri"},
+  T3:{parent:"A2",name:"Eğitim ve Öğretim Yetkinlikleri"}, T4:{parent:"A2",name:"Kullanıcı ve Toplum Hizmetleri"},
+  T5:{parent:"A3",name:"Veri ve Bilgi Yönetimi"}, T6:{parent:"A3",name:"Dijital Okuryazarlık ve Teknoloji Yönetimi"},
+  T7:{parent:"A4",name:"Kütüphane Operasyon ve Süreç Yönetimi"}, T8:{parent:"A4",name:"İletişim, İş Birliği ve Sosyal Beceriler"},
+  T9:{parent:"A4",name:"İdari ve Kurumsal Yönetim"}
+};
+const basics = {
+  B1:{parent:"T1",name:"Bilgi Arama Stratejileri Geliştirme"}, B2:{parent:"T1",name:"Farklı Veri Tabanlarında Etkin Arama"}, B3:{parent:"T1",name:"Kanıta Dayalı Bilgiye Erişim ve Sunum"},
+  B4:{parent:"T2",name:"Klinik Ekiplerle İş Birliği"}, B5:{parent:"T2",name:"Araştırma Metodolojisi Bilgisi"}, B6:{parent:"T2",name:"Kanıta Dayalı Uygulama Desteği"},
+  B7:{parent:"T3",name:"Bilgi Okuryazarlığı Eğitimi Verme"}, B8:{parent:"T3",name:"Kullanıcı Eğitimi ve Danışmanlığı"},
+  B9:{parent:"T5",name:"Araştırma Verisi Yönetimi"}, B10:{parent:"T5",name:"Veri Gizliliği ve Güvenliği"},
+  B11:{parent:"T6",name:"Elektronik Kütüphane Sistemleri Yönetimi"}, B12:{parent:"T6",name:"Yazılım ve Programlama Bilgisi"}, B13:{parent:"T6",name:"Dijital Kaynak ve İçerik Yönetimi"},
+  B14:{parent:"T7",name:"Koleksiyon Geliştirme ve Yönetimi"}, B15:{parent:"T7",name:"Proje Yönetimi"},
+  B16:{parent:"T8",name:"Etkili Sözlü ve Yazılı İletişim"}, B17:{parent:"T8",name:"Paydaşlarla İş Birliği Geliştirme"},
+  B18:{parent:"T9",name:"Stratejik Planlama ve Politika Geliştirme"}, B19:{parent:"T9",name:"Kalite Kontrol ve Hizmet İyileştirme"},
+  B20:{parent:"T4",name:"Toplum Odaklı Bilgi Hizmetleri Sunma"}, B21:{parent:"T4",name:"Kişiye Özel Hizmet Sunma"}
+};
+const nameOf = id => domains[id] || themes[id]?.name || basics[id]?.name || id;
+const matrixDefs = [
+  {id:"M01",title:"Ana alanlar",context:"Amaç → ana alanlar",elements:["A1","A2","A3","A4"]},
+  {id:"M02",title:"A1 temaları",context:"A1 → temalar",elements:["T1","T2"]},
+  {id:"M03",title:"A2 temaları",context:"A2 → temalar",elements:["T3","T4"]},
+  {id:"M04",title:"A3 temaları",context:"A3 → temalar",elements:["T5","T6"]},
+  {id:"M05",title:"A4 temaları",context:"A4 → temalar",elements:["T7","T8","T9"]},
+  {id:"M06",title:"T1 temel yetkinlikleri",context:"T1 → temel yetkinlikler",elements:["B1","B2","B3"]},
+  {id:"M07",title:"T2 temel yetkinlikleri",context:"T2 → temel yetkinlikler",elements:["B4","B5","B6"]},
+  {id:"M08",title:"T3 temel yetkinlikleri",context:"T3 → temel yetkinlikler",elements:["B7","B8"]},
+  {id:"M09",title:"T4 temel yetkinlikleri",context:"T4 → temel yetkinlikler",elements:["B20","B21"]},
+  {id:"M10",title:"T5 temel yetkinlikleri",context:"T5 → temel yetkinlikler",elements:["B9","B10"]},
+  {id:"M11",title:"T6 temel yetkinlikleri",context:"T6 → temel yetkinlikler",elements:["B11","B12","B13"]},
+  {id:"M12",title:"T7 temel yetkinlikleri",context:"T7 → temel yetkinlikler",elements:["B14","B15"]},
+  {id:"M13",title:"T8 temel yetkinlikleri",context:"T8 → temel yetkinlikler",elements:["B16","B17"]},
+  {id:"M14",title:"T9 temel yetkinlikleri",context:"T9 → temel yetkinlikler",elements:["B18","B19"]}
+];
+const comparisons = [];
+for (const matrix of matrixDefs) for (let i=0;i<matrix.elements.length;i++) for (let j=i+1;j<matrix.elements.length;j++) comparisons.push({
+  no:comparisons.length+1, matrixId:matrix.id, context:matrix.context, leftId:matrix.elements[i], rightId:matrix.elements[j], left:nameOf(matrix.elements[i]), right:nameOf(matrix.elements[j])
+});
+const answers = new Map();
+const questionsRoot = document.getElementById("questions");
+
+function scaleButtons(comp) {
+  const values = [];
+  for (const degree of [9,8,7,6,5,4,3,2]) values.push({side:"left",degree,value:degree,label:String(degree)});
+  values.push({side:"equal",degree:1,value:1,label:"1"});
+  for (const degree of [2,3,4,5,6,7,8,9]) values.push({side:"right",degree,value:1/degree,label:String(degree)});
+  return values.map((v,idx)=>`<button type="button" class="scale-btn ${v.side}" data-no="${comp.no}" data-side="${v.side}" data-degree="${v.degree}" data-value="${v.value}" aria-label="${v.side==='left'?'Sol daha önemli':v.side==='right'?'Sağ daha önemli':'Eşit önem'} derece ${v.degree}" aria-pressed="false">${v.label}</button>`).join("");
+}
+function renderQuestions() {
+  for (const matrix of matrixDefs) {
+    const section = document.createElement("section"); section.className="section";
+    const sectionComps = comparisons.filter(c=>c.matrixId===matrix.id);
+    const sectionNumber = matrixDefs.indexOf(matrix) + 1;
+    section.innerHTML = `<div class="section-head"><div><h2>${sectionNumber}. ${matrix.title}</h2><p>Bu bölümdeki ifadeleri yalnızca kendi aralarında karşılaştırın.</p></div><span class="count">${sectionComps.length} soru</span></div>`;
+    for (const comp of sectionComps) {
+      const article = document.createElement("article"); article.className="question"; article.id=`q-${comp.no}`;
+      article.innerHTML = `<div class="q-top"><div class="q-no">${comp.no}</div><div class="q-context"><strong>Karşılaştırma ${comp.no}</strong></div><div><strong>Hangisi daha önemli?</strong></div></div>
+        <div class="pair"><div class="item"><div>${comp.left}</div></div><div class="vs">göre</div><div class="item right-item"><div>${comp.right}</div></div></div>
+        <div class="scale-wrap"><div class="scale" role="group" aria-label="${comp.left} ile ${comp.right} karşılaştırması">${scaleButtons(comp)}</div><div class="scale-labels"><span>Soldaki daha önemli</span><span>Eşit</span><span>Sağdaki daha önemli</span></div><div class="choice" id="choice-${comp.no}">Henüz seçim yapılmadı</div></div>`;
+      section.appendChild(article);
+    }
+    questionsRoot.appendChild(section);
+  }
+}
+function selectAnswer(button) {
+  const no = Number(button.dataset.no); const comp = comparisons.find(c=>c.no===no);
+  const side = button.dataset.side; const degree = Number(button.dataset.degree); const value = Number(button.dataset.value);
+  answers.set(no,{no,matrixId:comp.matrixId,context:comp.context,leftId:comp.leftId,left:comp.left,rightId:comp.rightId,right:comp.right,side,degree,value});
+  const article = document.getElementById(`q-${no}`); article.classList.remove("unanswered");
+  article.querySelectorAll(".scale-btn").forEach(b=>{ const selected=b===button; b.classList.toggle("selected",selected); b.setAttribute("aria-pressed",String(selected)); });
+  const direction = side==='left'?'Sol daha önemli':side==='right'?'Sağ daha önemli':'Eşit önem';
+  const choice = document.getElementById(`choice-${no}`); choice.textContent=`Seçiminiz: ${direction} — derece ${degree}`; choice.classList.add("done");
+  updateProgress();
+}
+function updateProgress() {
+  const count=answers.size; document.getElementById("progressText").textContent=`${count} / ${comparisons.length} tamamlandı`; document.getElementById("progressBar").style.width=`${count/comparisons.length*100}%`;
+  document.querySelectorAll(".question").forEach(q=>{ const no=Number(q.id.slice(2)); if(!answers.has(no)) q.classList.toggle("unanswered",count>0); });
+}
+function metadata() { return {expertCode:document.getElementById("expertCode").value.trim(),role:document.getElementById("role").value.trim(),experienceYears:document.getElementById("years").value===""?null:Number(document.getElementById("years").value),institutionType:document.getElementById("institution").value.trim()}; }
+function getPayload() { return {formVersion:"AHP-TIP-KUTUPHANECILIGI-27-v1",method:"Saaty 1-9; yön ve derece; karşılıklılık",createdAt:new Date().toISOString(),metadata:metadata(),comparisons:comparisons.map(c=>answers.get(c.no))}; }
+function ensureComplete() {
+  if (answers.size===comparisons.length) return true;
+  const first=comparisons.find(c=>!answers.has(c.no)); if(first){ const q=document.getElementById(`q-${first.no}`); q.classList.add("unanswered"); q.scrollIntoView({behavior:"smooth",block:"center"}); }
+  setStatus(`Lütfen ${comparisons.length-answers.size} karşılaştırmayı daha yanıtlayın.`,false); return false;
+}
+function setStatus(text,ok) { const el=document.getElementById("status"); el.textContent=text; el.className=ok?"ok":"error"; }
+function download(name,content,type) { const blob=new Blob([content],{type}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),1000); }
+function safeName() { const code=metadata().expertCode.replace(/[^A-Za-z0-9_-]+/g,"_"); return code||"uzman"; }
+function toCsv(payload) {
+  const headers=["Uzman kodu","Görev/rol","Deneyim yılı","Kurum türü","Sıra","Matris","Bağlam","Sol ID","Sol öğe","Sağ ID","Sağ öğe","Yön","Derece","Kodlanan AHP değeri"];
+  const m=payload.metadata; const rows=payload.comparisons.map(a=>[m.expertCode,m.role,m.experienceYears??"",m.institutionType,a.no,a.matrixId,a.context,a.leftId,a.left,a.rightId,a.right,a.side==='left'?'Sol daha önemli':a.side==='right'?'Sağ daha önemli':'Eşit önem',a.degree,a.value]);
+  const esc=v=>`"${String(v??"").replaceAll('"','""')}"`; return "\ufeff"+[headers,...rows].map(r=>r.map(esc).join(",")).join("\r\n");
+}
+renderQuestions(); updateProgress();
+document.addEventListener("click",e=>{ if(e.target.matches(".scale-btn")) selectAnswer(e.target); });
+document.getElementById("downloadJson").addEventListener("click",()=>{ if(!ensureComplete()) return; const p= getPayload(); download(`ahp_yanit_${safeName()}.json`,JSON.stringify(p,null,2),"application/json;charset=utf-8"); setStatus("JSON yanıt dosyası indirildi.",true); });
+document.getElementById("downloadCsv").addEventListener("click",()=>{ if(!ensureComplete()) return; const p=getPayload(); download(`ahp_yanit_${safeName()}.csv`,toCsv(p),"text/csv;charset=utf-8"); setStatus("CSV yanıt dosyası indirildi.",true); });
+document.getElementById("printForm").addEventListener("click",()=>{ if(answers.size<comparisons.length) setStatus("PDF/çıktı alabilirsiniz; eksik satırlar kırmızı gösterilir.",false); else setStatus("Yazdırma penceresinden PDF olarak kaydedebilirsiniz.",true); window.print(); });
+document.getElementById("clearForm").addEventListener("click",()=>{ if(!confirm("Tüm seçimler silinsin mi?")) return; answers.clear(); document.querySelectorAll(".scale-btn").forEach(b=>{b.classList.remove("selected");b.setAttribute("aria-pressed","false")}); document.querySelectorAll(".choice").forEach(c=>{c.textContent="Henüz seçim yapılmadı";c.classList.remove("done")}); document.querySelectorAll(".question").forEach(q=>q.classList.remove("unanswered")); updateProgress(); setStatus("Form temizlendi.",true); });
+</script>
+</body>
+</html>
